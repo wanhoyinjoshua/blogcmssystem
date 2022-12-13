@@ -434,9 +434,20 @@ export default function Home(props) {
     //set the state here so the latest state is the image list 
     console.log(finalupload)
     // now time to push the data to server
-    const uploadresponse = await axios.post(`${process.env.APIPATH}/api/savedata`, finalupload)
+   
+    const uploadresponse = await fetch(`/api/savedata`, {
+      method:'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(finalupload),
     
-    if(uploadresponse.data.duplicate==true){
+      
+    })
+    const data = await uploadresponse.json();
+    console.log(data)
+
+    if(data.duplicate==true){
       window.alert("the title of this page has already been used")
     }
     else{
@@ -526,6 +537,9 @@ export async function getStaticProps({ params }) {
   let blogname = params.name
   console.log(blogname)
   const res = await axios.get(`${process.env.APIPATH}/api/getonepost?postid=${blogname}`);
+ 
+
+
   var parsedjsondata= JSON.parse(res.data.onepost.jsondata)
   console.log(parsedjsondata)
   var imagelist=[]

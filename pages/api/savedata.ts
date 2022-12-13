@@ -7,7 +7,7 @@ export default async function savepost(req, res) {
   switch (method) {
     case 'POST':
       try {
-        
+        console.log(req.body)
         const dupslug= await prisma.blogs.findUnique({
           where: {
           slug: req.body.slug
@@ -15,7 +15,7 @@ export default async function savepost(req, res) {
       })
       console.log(dupslug)
 
-      if(dupslug==null||dupslug.blogtitleid==req.body.articleid){
+      if(dupslug==undefined||dupslug.blogtitleid==req.body.articleid){
         console.log(req.body)
         const onepost = await prisma.blogs.update({
             where: {
