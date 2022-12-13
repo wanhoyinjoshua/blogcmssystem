@@ -43,7 +43,7 @@ const index = (props) => {
       {props.data.map((e)=>{
        return (
         
-        <Blogpost heading={e.heading} picture={e.picture} date={e.time} blogtitleid={e.blogtitleid}></Blogpost>
+        <Blogpost key={e.blogtitleid} heading={e.heading} picture={e.picture} date={e.time} blogtitleid={e.blogtitleid}></Blogpost>
 
      );})}
        

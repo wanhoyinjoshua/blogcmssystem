@@ -478,7 +478,7 @@ export default function Home(props) {
       </Head>
       <div className='utilitybar'>
         
-        <a href='/'>Homepage</a>
+        <Link href='/'>Homepage</Link>
 
         
         
