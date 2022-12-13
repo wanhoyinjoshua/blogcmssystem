@@ -2,8 +2,8 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import useAutosizeTextArea from "../../hooks/autoresize"
 import React, { useEffect, useState,useRef } from 'react'
-// Import the Slate editor factory.
-import { createEditor } from 'slate'
+
+
 
 import StarterKit from '@tiptap/starter-kit'
 import Document from '@tiptap/extension-document'
@@ -19,7 +19,7 @@ import{ useCallback } from 'react'
 import axios from "axios"
 import { generateHTML } from '@tiptap/html'
 import Link from "next/link"
-// Import the Slate components and React plugin.
+
 
 
 const MenuBar = ({ editor }) => {
