@@ -341,7 +341,7 @@ export default function Home(props) {
 
   }
   else{
-    await axios.post(`${process.env.APIPATH}/api/getdeleteurl`,{data:JSON.stringify(difference)})
+    await axios.post(`https://blogcmssystem.vercel.app/api/getdeleteurl`,{data:JSON.stringify(difference)})
 
     
   }
@@ -536,7 +536,7 @@ export default function Home(props) {
 export async function getStaticProps({ params }) {
   let blogname = params.name
   console.log(blogname)
-  const res = await axios.get(`${process.env.APIPATH}/api/getonepost?postid=${blogname}`);
+  const res = await axios.get(`https://blogcmssystem.vercel.app/api/getonepost?postid=${blogname}`);
  
 
 
@@ -569,7 +569,7 @@ export async function getStaticProps({ params }) {
 }
 
 export async function getStaticPaths(props) {
-  const res = await axios.get(`${process.env.APIPATH}/api/getallposts`,{ 
+  const res = await axios.get(`https://blogcmssystem.vercel.app/api/getallposts`,{ 
     headers: { "Accept-Encoding": "gzip,deflate,compress" } 
 });
   console.log(res)

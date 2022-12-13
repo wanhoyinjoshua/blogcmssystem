@@ -95,7 +95,7 @@ export default function Home(props) {
 
 export async function getStaticProps({ params }) {
   let slug = params.name
-  const res = await axios.get(`${process.env.APIPATH}/api/getonepostslug?postid=${slug}`, { 
+  const res = await axios.get(`https://blogcmssystem.vercel.app/api/getonepostslug?postid=${slug}`, { 
     headers: { "Accept-Encoding": "gzip,deflate,compress" } 
 });
   var html= res.data.onepost.body
@@ -115,7 +115,7 @@ export async function getStaticProps({ params }) {
 }
 
 export async function getStaticPaths(props) {
-  const res = await axios.get(`${process.env.APIPATH}/api/getallposts`, { 
+  const res = await axios.get(`https://blogcmssystem.vercel.app/api/getallposts`, { 
     headers: { "Accept-Encoding": "gzip,deflate,compress" } 
 });
 
