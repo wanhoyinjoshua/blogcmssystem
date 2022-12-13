@@ -95,7 +95,9 @@ export default function Home(props) {
 
 export async function getStaticProps({ params }) {
   let slug = params.name
-  const res = await axios.get(`${process.env.APIPATH}/api/getonepostslug?postid=${slug}`);
+  const res = await axios.get(`${process.env.APIPATH}/api/getonepostslug?postid=${slug}`, { 
+    headers: { "Accept-Encoding": "gzip,deflate,compress" } 
+});
   var html= res.data.onepost.body
   var heading = res.data.onepost.h1
   
@@ -113,7 +115,9 @@ export async function getStaticProps({ params }) {
 }
 
 export async function getStaticPaths(props) {
-  const res = await axios.get(`${process.env.APIPATH}/api/getallposts`);
+  const res = await axios.get(`${process.env.APIPATH}/api/getallposts`, { 
+    headers: { "Accept-Encoding": "gzip,deflate,compress" } 
+});
   console.log(res)
   const paths = res.data.allpost.map((article) => ({
       params: { name: article.slug },
