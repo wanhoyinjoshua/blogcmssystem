@@ -64,7 +64,9 @@ export default index
 
 export async function getStaticProps() {
   
-  const res = await axios.get(`${process.env.APIPATH}/api/getallposts`);
+  const res = await axios.get(`${process.env.APIPATH}/api/getallposts`, { 
+    headers: { "Accept-Encoding": "gzip,deflate,compress" } 
+});
   const data = res.data.allpost.map((article) => ({
     picture: article.imagepreview,
     blogtitleid:article.blogtitleid,

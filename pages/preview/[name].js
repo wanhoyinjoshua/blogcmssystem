@@ -118,7 +118,8 @@ export async function getStaticPaths(props) {
   const res = await axios.get(`${process.env.APIPATH}/api/getallposts`, { 
     headers: { "Accept-Encoding": "gzip,deflate,compress" } 
 });
-  console.log(res)
+
+
   const paths = res.data.allpost.map((article) => ({
       params: { name: article.slug },
     }))
