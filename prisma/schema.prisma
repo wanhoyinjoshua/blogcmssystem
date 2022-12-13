@@ -1,0 +1,21 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+ url="mysql://zvqxeej3q39azq3dqpn9:pscale_pw_8wqdvgW92vEpUM5b33duEaQqPo69uODi1koxWzLtuEv@aws-ap-southeast-2.connect.psdb.cloud/blogsystemcustomcms?sslaccept=strict"
+ relationMode = "prisma"
+
+}
+
+model Blogs{
+id      Int   @default(autoincrement()) @id
+blogtitleid    String @unique
+body   String   @db.Text
+jsondata String @db.Text
+h1 String?
+timeupdated String
+slug String @unique
+imagepreview String
+}
