@@ -45,7 +45,7 @@ export default function Home(props) {
       <main className="editorframe">
       <Navbar></Navbar>
       
-      <div>Project Name</div>
+      
       <div className='Previewarticle'>
       <h1 className="previewheader">{props.heading}</h1>
       <div className="flexcontainer" dangerouslySetInnerHTML={{ __html: props.onepost }}></div>

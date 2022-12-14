@@ -1,4 +1,5 @@
 import '../styles/styles.scss'
+import '../styles/toolbar.scss'
 import { useEffect } from 'react'
 
 export default function App({ Component, pageProps }) {

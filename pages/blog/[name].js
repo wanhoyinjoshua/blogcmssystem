@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import useAutosizeTextArea from "../../hooks/autoresize"
 import React, { useEffect, useState,useRef } from 'react'
 
-
+import Router from 'next/router'
 
 
 import StarterKit from '@tiptap/starter-kit'
@@ -30,6 +30,27 @@ const MenuBar = ({ editor }) => {
   if (!editor) {
     return null
   }
+  const setLink = useCallback(() => {
+    const previousUrl = editor.getAttributes('link').href
+    const url = window.prompt('URL', previousUrl)
+
+    // cancelled
+    if (url === null) {
+      return
+    }
+
+    // empty
+    if (url === '') {
+      editor.chain().focus().extendMarkRange('link').unsetLink()
+        .run()
+
+      return
+    }
+
+    // update link
+    editor.chain().focus().extendMarkRange('link').setLink({ href: url })
+      .run()
+  }, [editor])
  
 
 
@@ -49,7 +70,7 @@ const MenuBar = ({ editor }) => {
             .toggleBold()
             .run()
         }
-        className={editor.isActive('bold') ? 'is-active' : ''}
+        className={`fonttype ${editor.isActive('bold') ? 'is-active' : ''}`}
       >
         bold
       </button>
@@ -62,7 +83,7 @@ const MenuBar = ({ editor }) => {
             .toggleItalic()
             .run()
         }
-        className={editor.isActive('italic') ? 'is-active' : ''}
+        className={`fonttype ${editor.isActive('italic') ? 'is-active' : ''}`}
       >
         italic
       </button>
@@ -75,7 +96,7 @@ const MenuBar = ({ editor }) => {
             .toggleStrike()
             .run()
         }
-        className={editor.isActive('strike') ? 'is-active' : ''}
+        className={`fonttype ${editor.isActive('strike') ? 'is-active' : ''}`}
       >
         strike
       </button>
@@ -88,13 +109,22 @@ const MenuBar = ({ editor }) => {
             .toggleCode()
             .run()
         }
-        className={editor.isActive('code') ? 'is-active' : ''}
+        className={`fonttype ${editor.isActive('code') ? 'is-active' : ''}`}
       >
         code
       </button>
+      <button onClick={setLink} className={editor.isActive('link') ? 'is-active' : ''}>
+        setLink
+      </button>
+      <button
+        onClick={() => editor.chain().focus().unsetLink().run()}
+        disabled={!editor.isActive('link')}
+      >
+        unsetLink
+      </button>
       <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-        className={editor.isActive('heading', { level: 2 }) ? 'is-active' : ''}
+        className={` ${editor.isActive('heading', { level: 2 }) ? 'is-active' : ''}`}
       >
         h2
       </button>
@@ -106,29 +136,30 @@ const MenuBar = ({ editor }) => {
       </button>
       <button
         onClick={() => editor.chain().focus().toggleBulletList().run()}
-        className={editor.isActive('bulletList') ? 'is-active' : ''}
+        className={`blocktype ${editor.isActive('bulletList') ? 'is-active' : ''}`}
       >
         bullet list
       </button>
       <button
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
-        className={editor.isActive('orderedList') ? 'is-active' : ''}
+        className={`blocktype ${editor.isActive('orderedList') ? 'is-active' : ''}`}
       >
         ordered list
       </button>
       <button
         onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-        className={editor.isActive('codeBlock') ? 'is-active' : ''}
+        className={`blocktype ${editor.isActive('codeBlock') ? 'is-active' : ''}`}
       >
         code block
       </button>
       <button
         onClick={() => editor.chain().focus().toggleBlockquote().run()}
-        className={editor.isActive('blockquote') ? 'is-active' : ''}
+        className={`blocktype ${editor.isActive('blockquote') ? 'is-active' : ''}`}
       >
         blockquote
       </button>
-      <button onClick={() => editor.chain().focus().setHorizontalRule().run()}>
+      <button onClick={() => editor.chain().focus().setHorizontalRule().run()}
+      className="blocktype">
         horizontal rule
       </button>
      
@@ -213,7 +244,8 @@ export default function Home(props) {
     onUpdate: ({ editor }) => {
       const json = editor.getJSON()
       sethtml(json)
-      console.log(html)
+      setSave("not saved")
+      
 
      
       // send the content to an API here
@@ -263,9 +295,11 @@ export default function Home(props) {
   useEffect(() => {
     // Update the document title using the browser API
     setimagestack(props.image)
+    sethtml(props.onepost)
     if (editor) {
       editor.setEditable(isEditable)
     }
+    
     
     
     
@@ -274,6 +308,7 @@ export default function Home(props) {
 
   
   const [html,sethtml] = useState()
+  const [saved,setSave]= useState()
 
   const checktoupload= async(htmldup)=>{
     var updatedimagelist=[]
@@ -370,17 +405,24 @@ export default function Home(props) {
   }
 
 const deletepost=async()=>{
-  await fetch(`/api/deleteonepost?postid=${props.postid}`,
+  if(window.confirm("are you sure, it cannot be undone")){
+     const deleteres= await fetch(`/api/deleteonepost?postid=${props.postid}`,
    {method:'POST'}
-  
-  
-    
+
   )
+  if(deleteres!=undefined){
+    Router.push(`/`)
+
+    
+  }
+
+  }
+ 
 }
 
   const savehtml=async ()=>{
     //data is in html
-    console.log(html.content)
+    setSave("uploading")
     let imagelist=[]
     //run a for loop in content and find the image tag 
     var htmldup= html
@@ -481,7 +523,8 @@ const deletepost=async()=>{
       window.alert("the title of this page has already been used")
     }
     else{
-      //nmothing happens
+      //upload successusfull
+      setSave("saved")
     }
 
 
@@ -520,13 +563,38 @@ const deletepost=async()=>{
         <meta name="description" content="Generated by create next app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className='utilitybar'>
+      <div className='lefttoolbar'>
+       
+        <Link className="homepagebutton"href='/'>Homepage</Link>
+        <button className="leftbutton" onClick={addImage}>setImageonline</button>
+       <input
+       className="leftbutton"
+
+      type='file'
+
+      onChange={changeHandler}
+       
+      >
         
-        <Link href='/'>Homepage</Link>
+        
+      </input>
+    
+
 
         
         
       </div>
+      <div className='righttoolbar'>
+      {saved=="saved"&& <Link className="rightpreviewbutton rightbutton" href={`/preview/${realslug}`}><button>Preview the article onlibne</button></Link>}
+      
+      <button className="rightdeletebutton rightbutton" onClick={deletepost}>Delete the post</button>
+      <button className="rightsavebutton rightbutton" onClick ={savehtml}>save the draft online Status: {JSON.stringify(saved)}</button>
+     
+      <br></br>
+     
+
+
+</div>
       <main className="editorframe">
       
       <div>{blogname.name}</div>
@@ -543,53 +611,24 @@ const deletepost=async()=>{
         value={mainheading}
       />
       
-<div className='leftmenubar'>
-<button onClick={addImage}>setImageonline</button>
-       <input
 
-      type='file'
-
-      onChange={changeHandler}
-       
-      >
-        
-        
-      </input>
-      <button onClick ={savehtml}>save the draft online</button>
-
-      <Link href={`/preview/${realslug}`}><button>Preview the article onlibne</button></Link>
-      <button onClick={deletepost}>Delete the post</button>
-      <button onClick={setLink} className={editor.isActive('link') ? 'is-active' : ''}>
-        setLink
-      </button>
-      <button
-        onClick={() => editor.chain().focus().unsetLink().run()}
-        disabled={!editor.isActive('link')}
-      >
-        unsetLink
-      </button>
-      <br></br>
-     
-
-
-</div>
 
      
 {editor && <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          className={editor.isActive('bold') ? 'is-active' : ''}
+          className={`bubblemenubutton ${editor.isActive('bold') ? 'is-active' : ''}`}
         >
           h2
         </button>
         <button
           onClick={() => editor.chain().focus().setTextAlign('center').run()}
-          className={editor.isActive('center') ? 'is-active' : ''}
+          className={`bubblemenubutton ${editor.isActive('center') ? 'is-active' : ''}`}
         >
           Center
         </button>
         <button
-        onClick={setLink} className={editor.isActive('link') ? 'is-active' : ''}
+        onClick={setLink} className={`bubblemenubutton ${editor.isActive('link') ? 'is-active' : ''}`}
           
         
         >
@@ -603,6 +642,7 @@ const deletepost=async()=>{
       
 
       </main>
+      
      
 
     </div>

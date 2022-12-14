@@ -1,0 +1,95 @@
+.fonttype{
+    background-color: pink;
+    cursor: pointer;
+
+}
+
+.menubar button:hover{
+    background-color: aqua;
+    cursor: pointer;
+}
+
+.blocktype{
+    background-color: orange;
+    cursor: pointer;
+
+}
+
+.bubblemenubutton{
+    background-color: antiquewhite;
+    margin: 2px;
+    width: 5vw;
+    cursor: pointer;
+    
+}
+
+.bubblemenubutton:hover{
+    background-color: rgb(255, 170, 60);
+    margin: 2px;
+    width: 7vw;
+    cursor: pointer;
+    
+}
+
+.lefttoolbar{
+    position:fixed;
+    left:0;
+      width:25vw;
+      z-index:100;
+      background-color: white;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      justify-content: center;
+      align-items: center;
+
+      .homepagebutton{
+        position:fixed;
+   
+    top:10vh;
+    
+    justify-content: center;
+    align-items: center;
+
+    
+      }
+
+      .leftbutton{
+        margin: 2vh;
+      }
+  
+
+
+}
+
+
+.righttoolbar{
+    position:fixed;
+    right:0;
+      width:25vw;
+      z-index:100;
+      background-color: white;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      justify-content: center;
+      align-items: center;
+
+      .rightpreviewbutton{
+        position:fixed;
+        top:20vh
+
+      }
+      .rightdeletebutton{
+        position:fixed;
+        bottom:20vh
+
+      }
+      .rightsavebutton{
+        position:fixed;
+        top:10vh
+      }
+  
+
+}
+
