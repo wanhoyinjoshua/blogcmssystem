@@ -341,15 +341,30 @@ export default function Home(props) {
 
   }
   else{
-    await axios.post(`${process.env.APIPATH}/api/getdeleteurl`,{data:JSON.stringify(difference)})
-
+    
+     await fetch(`/api/getdeleteurl`, {
+      method:'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(difference),
+    
+      
+    })
     
   }
   
   
   }
 
-
+const deletepost=async()=>{
+  await fetch(`/api/deleteonepost?postid=${props.postid}`,
+   {method:'POST'}
+  
+  
+    
+  )
+}
 
   const savehtml=async ()=>{
     //data is in html
@@ -358,7 +373,7 @@ export default function Home(props) {
     //run a for loop in content and find the image tag 
     var htmldup= html
     //check to see if i need to delete any object from the s3 bucket
-    const deleteimage = await checktodelete(htmldup)
+    await checktodelete(htmldup)
     const savedjsondata= await checktoupload(htmldup)
     console.log(mainheading)
     
@@ -391,10 +406,11 @@ export default function Home(props) {
     var slug= formaattedheading.toLowerCase().replace(/\s/g, '-').replace("?",'')
     setslug(slug)
     for (let i = 0; i < savedjsondata.content.length; i++) {
-      
+      console.log(savedjsondata)
       if(savedjsondata.content[i].type=="image"){
         if(savedjsondata.content[i].attrs.src.includes("blob")!=true){
           imagelist.push(savedjsondata.content[i].attrs.src)
+          console.log(savedjsondata.content[i].attrs.src)
 
 
 
@@ -431,7 +447,8 @@ export default function Home(props) {
     
    
     const finalupload={json:savedjsondata,html:savedhtmldata,articleid:props.postid, heading:formaattedheading, slug:slug, date:new Date().toLocaleDateString(),imagepreview:imagelist[0]}
-    //set the state here so the latest state is the image list 
+    //set the state here so the latest state is the image list
+    console.log("this is final uplaod") 
     console.log(finalupload)
     // now time to push the data to server
    
@@ -512,6 +529,7 @@ export default function Home(props) {
       <button onClick ={savehtml}>save the draft online</button>
 
       <Link href={`/preview/${realslug}`}><button>Preview the article onlibne</button></Link>
+      <button onClick={deletepost}>Delete the post</button>
       <br></br>
       <textarea
         className="titletext"placeholder='Type in your title here' contenteditable
@@ -533,7 +551,7 @@ export default function Home(props) {
   )
 }
 
-export async function getStaticProps({ params }) {
+export async function getServerSideProps({ params }) {
   
   let blogname = params.name
  
@@ -573,6 +591,8 @@ var parsedcontent= JSON.parse(onepost.jsondata).content
   }
 }
 
+
+/*
 export async function getStaticPaths(props) {
   
   
@@ -587,6 +607,6 @@ export async function getStaticPaths(props) {
     fallback: false
   }
 }
-
+*/
 
 

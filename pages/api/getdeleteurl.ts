@@ -53,7 +53,7 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   
-  var imagelist= JSON.parse(req.body.data)
+  var imagelist= JSON.parse(req.body)
   console.log(imagelist)
   
   for (let i=0; i<imagelist.length; i++){

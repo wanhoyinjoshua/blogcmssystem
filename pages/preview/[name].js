@@ -69,7 +69,7 @@ export default function Home(props) {
   )
 }
 
-export async function getStaticProps({ params }) {
+export async function getServerSideProps({ params }) {
   let slug = params.name
   
 //
@@ -81,12 +81,18 @@ export async function getStaticProps({ params }) {
 
 
 })
-
-///
+if(onepost==undefined){
+  return {
+    redirect: {
+      permanent: false,
+      destination: "/blog-post-not-found"
+    }
+  }
+}
+else{
   var html= onepost.body
   var heading = onepost.h1
-  
-  
+   
   return {
     props: {
       onepost:html,
@@ -97,8 +103,16 @@ export async function getStaticProps({ params }) {
       
     }
   }
+
 }
 
+///
+
+  
+ 
+}
+
+/*
 export async function getStaticPaths(props) {
   
 ///
@@ -120,6 +134,7 @@ const allpost = await prisma.blogs.findMany()
   
  
 }
+*/
 
 
 

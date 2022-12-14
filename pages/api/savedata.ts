@@ -17,6 +17,15 @@ export default async function savepost(req, res) {
 
       if(dupslug==undefined||dupslug.blogtitleid==req.body.articleid){
         console.log(req.body)
+        var imagepreview=""
+        if(req.body.imagepreview==undefined){
+          imagepreview=""
+
+        }
+        else{
+          imagepreview= req.body.imagepreview
+
+        }
         const onepost = await prisma.blogs.update({
             where: {
                 blogtitleid: `${req.body.articleid}`
@@ -27,7 +36,7 @@ export default async function savepost(req, res) {
                 h1:req.body.heading,
                 timeupdated:req.body.date,
                 slug: req.body.slug,
-                imagepreview:req.body.imagepreview
+                imagepreview:imagepreview
                 
 
               },
