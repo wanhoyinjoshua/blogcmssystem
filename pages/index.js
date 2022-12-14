@@ -64,10 +64,10 @@ export default index
 
 export async function getStaticProps() {
   
-  const res = await axios.get(`https://blogcmssystem.vercel.app/api/getallposts`, { 
-    headers: { "Accept-Encoding": "gzip,deflate,compress" } 
-});
-  const data = res.data.allpost.map((article) => ({
+  const res = await fetch(`${process.env.APIPATH}/api/getallposts`);
+  const resdata = await res.json();
+  console.log(resdata)
+  const data = resdata.allpost.map((article) => ({
     picture: article.imagepreview,
     blogtitleid:article.blogtitleid,
     time:article.timeupdated,

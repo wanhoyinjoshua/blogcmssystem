@@ -341,7 +341,7 @@ export default function Home(props) {
 
   }
   else{
-    await axios.post(`https://blogcmssystem.vercel.app/api/getdeleteurl`,{data:JSON.stringify(difference)})
+    await axios.post(`${process.env.APIPATH}/api/getdeleteurl`,{data:JSON.stringify(difference)})
 
     
   }
@@ -534,34 +534,36 @@ export default function Home(props) {
 }
 
 export async function getStaticProps({ params }) {
+  
   let blogname = params.name
   console.log(blogname)
-  const res = await axios.get(`https://blogcmssystem.vercel.app/api/getonepost?postid=${blogname}`);
- 
-
-
-  var parsedjsondata= JSON.parse(res.data.onepost.jsondata)
-  console.log(parsedjsondata)
+  var res = await fetch(`${process.env.APIPATH}/api/getonepost?postid=${blogname}`);
+ var resdata= await res.json()
+console.log('this is start of data')
+console.log(JSON.parse(resdata.onepost.jsondata).content)
+console.log('this is end of data')
+var parsedcontent= JSON.parse(resdata.onepost.jsondata).content
+  
   var imagelist=[]
-  for (let i = 0; i < parsedjsondata.content.length; i++) {
+  for (let i = 0; i < parsedcontent.length; i++) {
     
-    if(parsedjsondata.content[i].type=="image"){
-      if(parsedjsondata.content[i].attrs.src.includes("blob")!=true){
+    if(parsedcontent[i].type=="image"){
+      if(parsedcontent[i].attrs.src.includes("blob")!=true){
         //then add to picture list 
-        imagelist.push(parsedjsondata.content[i].attrs.src)
+        imagelist.push(parsedcontent[i].attrs.src)
 
       }
     }
 
   }
-  
+  console.log(JSON.parse(resdata.onepost.jsondata))
   return {
     props: {
-      onepost:parsedjsondata,
+      onepost:JSON.parse(resdata.onepost.jsondata),
       image:imagelist,
       postid:blogname,
-      title:res.data.onepost.h1,
-      slug:res.data.onepost.slug
+      title:resdata.onepost.h1,
+      slug:resdata.onepost.slug
       
       
     }
@@ -569,13 +571,15 @@ export async function getStaticProps({ params }) {
 }
 
 export async function getStaticPaths(props) {
-  const res = await axios.get(`https://blogcmssystem.vercel.app/api/getallposts`,{ 
-    headers: { "Accept-Encoding": "gzip,deflate,compress" } 
-});
-  console.log(res)
-  const paths = res.data.allpost.map((article) => ({
+  
+  const res = await fetch(`${process.env.APIPATH}/api/getallposts` 
+   );
+  const resdata=await res.json()
+  console.log(resdata.allpost)
+  const paths = resdata.allpost.map((article) => ({
       params: { name: article.blogtitleid },
     }))
+    
   return {
     paths,
     fallback: false

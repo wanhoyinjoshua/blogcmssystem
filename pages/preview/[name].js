@@ -15,7 +15,7 @@ import Bold from '@tiptap/extension-bold'
 import Text from '@tiptap/extension-text'
 import { EditorContent, useEditor } from '@tiptap/react'
 import{ useCallback } from 'react'
-import axios from "axios"
+
 import { generateHTML } from '@tiptap/html'
 
 // Import the Slate components and React plugin.
@@ -95,11 +95,15 @@ export default function Home(props) {
 
 export async function getStaticProps({ params }) {
   let slug = params.name
-  const res = await axios.get(`https://blogcmssystem.vercel.app/api/getonepostslug?postid=${slug}`, { 
-    headers: { "Accept-Encoding": "gzip,deflate,compress" } 
-});
-  var html= res.data.onepost.body
-  var heading = res.data.onepost.h1
+  
+//
+const res = await fetch(`${process.env.APIPATH}/api/getonepostslug?postid=${slug}`);
+  const resdata = await res.json();
+
+
+///
+  var html= resdata.onepost.body
+  var heading = resdata.onepost.h1
   
   
   return {
@@ -115,12 +119,14 @@ export async function getStaticProps({ params }) {
 }
 
 export async function getStaticPaths(props) {
-  const res = await axios.get(`https://blogcmssystem.vercel.app/api/getallposts`, { 
-    headers: { "Accept-Encoding": "gzip,deflate,compress" } 
-});
+  
+///
+const res = await fetch(`${process.env.APIPATH}/api/getallposts`);
+  const resdata = await res.json();
+  //
 
 
-  const paths = res.data.allpost.map((article) => ({
+  const paths = resdata.allpost.map((article) => ({
       params: { name: article.slug },
     }))
   return {
