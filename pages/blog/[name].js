@@ -19,7 +19,7 @@ import{ useCallback } from 'react'
 import axios from "axios"
 import { generateHTML } from '@tiptap/html'
 import Link from "next/link"
-
+import prisma from "../../lib/prisma"
 
 
 const MenuBar = ({ editor }) => {
@@ -536,13 +536,16 @@ export default function Home(props) {
 export async function getStaticProps({ params }) {
   
   let blogname = params.name
-  console.log(blogname)
-  var res = await fetch(`${process.env.APIPATH}/api/getonepost?postid=${blogname}`);
- var resdata= await res.json()
-console.log('this is start of data')
-console.log(JSON.parse(resdata.onepost.jsondata).content)
-console.log('this is end of data')
-var parsedcontent= JSON.parse(resdata.onepost.jsondata).content
+ 
+ const onepost = await prisma.blogs.findUnique({
+  where: {
+      blogtitleid: `${blogname}`
+    },
+
+
+})
+
+var parsedcontent= JSON.parse(onepost.jsondata).content
   
   var imagelist=[]
   for (let i = 0; i < parsedcontent.length; i++) {
@@ -572,11 +575,10 @@ var parsedcontent= JSON.parse(resdata.onepost.jsondata).content
 
 export async function getStaticPaths(props) {
   
-  const res = await fetch(`${process.env.APIPATH}/api/getallposts` 
-   );
-  const resdata=await res.json()
-  console.log(resdata.allpost)
-  const paths = resdata.allpost.map((article) => ({
+  
+   const allpost = await prisma.blogs.findMany()
+  
+  const paths = allpost.map((article) => ({
       params: { name: article.blogtitleid },
     }))
     

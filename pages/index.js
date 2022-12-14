@@ -64,10 +64,9 @@ export default index
 
 export async function getStaticProps() {
   
-  const res = await fetch(`${process.env.APIPATH}/api/getallposts`);
-  const resdata = await res.json();
-  console.log(resdata)
-  const data = resdata.allpost.map((article) => ({
+ 
+  const allpost = await prisma.blogs.findMany()
+  const data = allpost.map((article) => ({
     picture: article.imagepreview,
     blogtitleid:article.blogtitleid,
     time:article.timeupdated,
