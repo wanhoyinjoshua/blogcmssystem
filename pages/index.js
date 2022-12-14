@@ -62,7 +62,7 @@ export default index
 
 
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   
  
   const allpost = await prisma.blogs.findMany()
