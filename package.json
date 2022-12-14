@@ -11,8 +11,10 @@
   "dependencies": {
     "@prisma/client": "^4.7.1",
     "@tiptap/extension-bold": "^2.0.0-beta.207",
+    "@tiptap/extension-bubble-menu": "^2.0.0-beta.207",
     "@tiptap/extension-heading": "^2.0.0-beta.207",
     "@tiptap/extension-image": "^2.0.0-beta.207",
+    "@tiptap/extension-link": "^2.0.0-beta.207",
     "@tiptap/extension-text-align": "^2.0.0-beta.207",
     "@tiptap/html": "^2.0.0-beta.207",
     "@tiptap/react": "^2.0.0-beta.207",

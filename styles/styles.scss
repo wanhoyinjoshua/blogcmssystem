@@ -1,7 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200;700&display=swap');
 .ProseMirror {
     > * + * {
       margin-top: 0.75em;
       outline: none;
+      font-family: 'Nunito', sans-serif;
+      font-size: 2rem;
 
       
     }
@@ -10,7 +13,11 @@
     }
 
 
-   
+    .my-custom-article-link{
+      
+      color: rgb(211, 137, 0);
+     }
+ 
   
     ul,
     ol {
@@ -51,6 +58,8 @@
      
       height: auto;
       max-width: 100%;
+      display: block;
+      margin: 0 auto;
       
       &.ProseMirror-selectednode {
         outline: 3px solid #f3b136;
@@ -80,9 +89,29 @@
   }
 
 .editorframe{
-    max-width: 70%;
+    max-width: 50%;
     margin: 0 auto;
     border: none;
+}
+.leftmenubar{
+  position:fixed;
+  right:0;
+    width:20vw;
+    z-index:100;
+    background-color: white;
+
+}
+.menubar{
+  
+  position:fixed;
+  display: flex;
+  flex-direction: row;
+  height: auto;
+    top:0;
+    width:50%;
+    z-index:100;
+    background-color: white;
+    overflow: auto;
 }
 @media (max-width: 768px) {
   .editorframe{
@@ -101,6 +130,16 @@
 
 }
 .Previewarticle{
+  font-family: 'Nunito', sans-serif;
+  font-size: 2rem;
+  
+  .my-custom-article-link{
+      
+    color: rgb(211, 137, 0);
+   }
+  .flexcontainer{
+    
+  }
   .previewheader{
     width: 100%;
     min-height: 10rem;
@@ -146,10 +185,13 @@
   
     img {
      
-      max-width:90%;
+      max-width:100%;
       height: auto;
       margin: 0 auto;
       padding: 0;
+      
+      display: block;
+      margin: 0 auto;
     
     }
 
@@ -169,12 +211,30 @@
         font-size: 5rem;
     }
 
+    @media (max-width: 768px) {
+      .previewheader{
+        width: 100%;
+        min-height: 10rem;
+        font-size:10vw;
+        max-height: 20rem;
+        text-align: left;
+      
+      }
+    
+    }
+
 }
+
+
+
+
 .titletext{
   width: 100%;
   min-height: 10rem;
   font-size:4rem;
   resize: none;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
   
   border: 1px solid #ccc;
   max-height: 20rem;

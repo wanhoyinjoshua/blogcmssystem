@@ -5,16 +5,20 @@ import React, { useEffect, useState,useRef } from 'react'
 
 
 
+
 import StarterKit from '@tiptap/starter-kit'
 import Document from '@tiptap/extension-document'
 import Dropcursor from '@tiptap/extension-dropcursor'
 import Image from '@tiptap/extension-image'
 import Paragraph from '@tiptap/extension-paragraph'
 import Bold from '@tiptap/extension-bold'
+
+
+import {Link as editorlink} from '@tiptap/extension-link'
 import TextAlign from '@tiptap/extension-text-align'
 import Heading from '@tiptap/extension-heading'
 import Text from '@tiptap/extension-text'
-import { EditorContent, useEditor } from '@tiptap/react'
+import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
 import{ useCallback } from 'react'
 import axios from "axios"
 import { generateHTML } from '@tiptap/html'
@@ -33,6 +37,9 @@ const MenuBar = ({ editor }) => {
 
   return (
     <>
+    <div className='menubar'>
+
+   
       <button
         onClick={() => editor.chain().focus().toggleBold().run()}
         disabled={
@@ -85,19 +92,6 @@ const MenuBar = ({ editor }) => {
       >
         code
       </button>
-      <button onClick={() => editor.chain().focus().unsetAllMarks().run()}>
-        clear marks
-      </button>
-      <button onClick={() => editor.chain().focus().clearNodes().run()}>
-        clear nodes
-      </button>
-      <button
-        onClick={() => editor.chain().focus().setParagraph().run()}
-        className={editor.isActive('paragraph') ? 'is-active' : ''}
-      >
-        paragraph
-      </button>
-   
       <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
         className={editor.isActive('heading', { level: 2 }) ? 'is-active' : ''}
@@ -109,24 +103,6 @@ const MenuBar = ({ editor }) => {
         className={editor.isActive('heading', { level: 3 }) ? 'is-active' : ''}
       >
         h3
-      </button>
-      <button
-        onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
-        className={editor.isActive('heading', { level: 4 }) ? 'is-active' : ''}
-      >
-        h4
-      </button>
-      <button
-        onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
-        className={editor.isActive('heading', { level: 5 }) ? 'is-active' : ''}
-      >
-        h5
-      </button>
-      <button
-        onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()}
-        className={editor.isActive('heading', { level: 6 }) ? 'is-active' : ''}
-      >
-        h6
       </button>
       <button
         onClick={() => editor.chain().focus().toggleBulletList().run()}
@@ -155,9 +131,7 @@ const MenuBar = ({ editor }) => {
       <button onClick={() => editor.chain().focus().setHorizontalRule().run()}>
         horizontal rule
       </button>
-      <button onClick={() => editor.chain().focus().setHardBreak().run()}>
-        hard break
-      </button>
+     
       <button
         onClick={() => editor.chain().focus().setTextAlign('left').run()}
         className={editor.isActive({ textAlign: 'left' }) ? 'is-active' : ''}
@@ -207,6 +181,7 @@ const MenuBar = ({ editor }) => {
       >
         redo
       </button>
+      </div>
       
     </>
   )
@@ -221,7 +196,18 @@ export default function Home(props) {
       Document, Paragraph, Text, Image, Dropcursor,StarterKit,Heading,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
+        
       }),
+      editorlink.configure({
+        openOnClick: true,
+        autolink: true,
+        linkOnPaste: true,
+        HTMLAttributes: {
+          class: 'my-custom-article-link',
+          rel:'nofollow'
+        },
+      }),
+      
     ],
     content: props.onepost,
     onUpdate: ({ editor }) => {
@@ -235,6 +221,29 @@ export default function Home(props) {
   })
   const [mainheading, setValue] = useState(props.title);
   const textAreaRef = useRef(null);
+  const [isEditable, setIsEditable] = React.useState(true)
+  const setLink = useCallback(() => {
+    const previousUrl = editor.getAttributes('link').href
+    const url = window.prompt('URL', previousUrl)
+
+    // cancelled
+    if (url === null) {
+      return
+    }
+
+    // empty
+    if (url === '') {
+      editor.chain().focus().extendMarkRange('link').unsetLink()
+        .run()
+
+      return
+    }
+
+    // update link
+    editor.chain().focus().extendMarkRange('link').setLink({ href: url })
+      .run()
+  }, [editor])
+
 
   useAutosizeTextArea(textAreaRef.current, mainheading);
 
@@ -254,10 +263,13 @@ export default function Home(props) {
   useEffect(() => {
     // Update the document title using the browser API
     setimagestack(props.image)
+    if (editor) {
+      editor.setEditable(isEditable)
+    }
     
     
     
-  },[props]);
+  },[props,isEditable, editor]);
 
 
   
@@ -437,6 +449,7 @@ const deletepost=async()=>{
         Text,
         Dropcursor,
         StarterKit,
+        editorlink,
         Image,
         TextAlign.configure({
           types: ['heading', 'paragraph'],
@@ -497,6 +510,9 @@ const deletepost=async()=>{
         
 		
 	};
+  if (!editor) {
+    return null
+  }
   return (
     <div >
       <Head>
@@ -514,8 +530,21 @@ const deletepost=async()=>{
       <main className="editorframe">
       
       <div>{blogname.name}</div>
+      <div >
       <MenuBar editor={editor} />
-      <button onClick={addImage}>setImageonline</button>
+
+      </div>
+      <textarea
+        className="titletext"placeholder='Type in your title here' contenteditable
+        onChange={handleChange}
+        
+        ref={textAreaRef}
+        rows={1}
+        value={mainheading}
+      />
+      
+<div className='leftmenubar'>
+<button onClick={addImage}>setImageonline</button>
        <input
 
       type='file'
@@ -530,15 +559,44 @@ const deletepost=async()=>{
 
       <Link href={`/preview/${realslug}`}><button>Preview the article onlibne</button></Link>
       <button onClick={deletepost}>Delete the post</button>
+      <button onClick={setLink} className={editor.isActive('link') ? 'is-active' : ''}>
+        setLink
+      </button>
+      <button
+        onClick={() => editor.chain().focus().unsetLink().run()}
+        disabled={!editor.isActive('link')}
+      >
+        unsetLink
+      </button>
       <br></br>
-      <textarea
-        className="titletext"placeholder='Type in your title here' contenteditable
-        onChange={handleChange}
+     
+
+
+</div>
+
+     
+{editor && <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>
+        <button
+          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          className={editor.isActive('bold') ? 'is-active' : ''}
+        >
+          h2
+        </button>
+        <button
+          onClick={() => editor.chain().focus().setTextAlign('center').run()}
+          className={editor.isActive('center') ? 'is-active' : ''}
+        >
+          Center
+        </button>
+        <button
+        onClick={setLink} className={editor.isActive('link') ? 'is-active' : ''}
+          
         
-        ref={textAreaRef}
-        rows={1}
-        value={mainheading}
-      />
+        >
+          Link
+        </button>
+        
+      </BubbleMenu>}
       <EditorContent  editor={editor} 
       />
   

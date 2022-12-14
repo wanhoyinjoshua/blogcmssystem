@@ -48,7 +48,7 @@ export default function Home(props) {
       <div>Project Name</div>
       <div className='Previewarticle'>
       <h1 className="previewheader">{props.heading}</h1>
-      <div dangerouslySetInnerHTML={{ __html: props.onepost }}></div>
+      <div className="flexcontainer" dangerouslySetInnerHTML={{ __html: props.onepost }}></div>
     </div>
 
       
