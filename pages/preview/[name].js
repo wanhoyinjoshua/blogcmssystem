@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-
+import prisma from "../../lib/prisma"
 import React, { useEffect, useState } from 'react'
 // Import the Slate editor factory.
 
@@ -73,13 +73,18 @@ export async function getStaticProps({ params }) {
   let slug = params.name
   
 //
-const res = await fetch(`${process.env.APIPATH}/api/getonepostslug?postid=${slug}`);
-  const resdata = await res.json();
 
+  const onepost = await prisma.blogs.findUnique({
+    where: {
+        slug: `${slug}`
+      },
+
+
+})
 
 ///
-  var html= resdata.onepost.body
-  var heading = resdata.onepost.h1
+  var html= onepost.body
+  var heading = onepost.h1
   
   
   return {
@@ -97,12 +102,11 @@ const res = await fetch(`${process.env.APIPATH}/api/getonepostslug?postid=${slug
 export async function getStaticPaths(props) {
   
 ///
-const res = await fetch(`${process.env.APIPATH}/api/getallposts`);
+
+const allpost = await prisma.blogs.findMany()
   
-  
-    const resdata = await res.json();
-    console.log(resdata)
-    const paths = resdata.allpost.map((article) => ({
+   
+    const paths = allpost.map((article) => ({
       params: { name: article.slug },
     }))
     return {
