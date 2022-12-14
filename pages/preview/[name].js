@@ -6,17 +6,6 @@ import React, { useEffect, useState } from 'react'
 
 import Navbar from "../../components/Navbar"
 
-import StarterKit from '@tiptap/starter-kit'
-import Document from '@tiptap/extension-document'
-import Dropcursor from '@tiptap/extension-dropcursor'
-import Image from '@tiptap/extension-image'
-import Paragraph from '@tiptap/extension-paragraph'
-import Bold from '@tiptap/extension-bold'
-import Text from '@tiptap/extension-text'
-import { EditorContent, useEditor } from '@tiptap/react'
-import{ useCallback } from 'react'
-
-import { generateHTML } from '@tiptap/html'
 
 // Import the Slate components and React plugin.
 
@@ -27,20 +16,7 @@ import { generateHTML } from '@tiptap/html'
 
 
 export default function Home(props) {
-  const editor = useEditor({
-    extensions: [
-      Document, Paragraph, Text, Image, Dropcursor,StarterKit
-    ],
-    content: props.onepost,
-    onUpdate: ({ editor }) => {
-      const json = editor.getJSON()
-      sethtml(json)
-      console.log(html)
-
-     
-      // send the content to an API here
-    }
-  })
+  
 
 
   const router = useRouter()
