@@ -98,7 +98,12 @@ export async function getStaticPaths(props) {
   
 ///
 const res = await fetch(`${process.env.APIPATH}/api/getallposts`);
-  const resdata = await res.json();
+  
+  try{
+    const resdata = await res.json();
+} catch(err) {
+    console.log("err: ", err)
+}
   //
 
 
