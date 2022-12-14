@@ -99,21 +99,22 @@ export async function getStaticPaths(props) {
 ///
 const res = await fetch(`${process.env.APIPATH}/api/getallposts`);
   
-  try{
+  
     const resdata = await res.json();
-} catch(err) {
-    console.log("err: ", err)
-}
+    console.log(resdata)
+    const paths = resdata.allpost.map((article) => ({
+      params: { name: article.slug },
+    }))
+    return {
+      paths,
+      fallback: false
+    }
+
   //
 
 
-  const paths = resdata.allpost.map((article) => ({
-      params: { name: article.slug },
-    }))
-  return {
-    paths,
-    fallback: false
-  }
+  
+ 
 }
 
 
