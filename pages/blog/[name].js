@@ -565,8 +565,8 @@ var parsedcontent= JSON.parse(onepost.jsondata).content
       onepost:JSON.parse(onepost.jsondata),
       image:imagelist,
       postid:blogname,
-      title:resdata.onepost.h1,
-      slug:resdata.onepost.slug
+      title:onepost.h1,
+      slug:onepost.slug
       
       
     }
