@@ -3,7 +3,7 @@ import React from 'react'
 import Router from 'next/router'
 import Image from 'next/image'
 import Blogpost from "../components/Blogpost"
-
+import prisma from "../lib/prisma"
 const index = (props) => {
   const createproject =async()=>{
     const projectname= window.prompt("What is the project name?")

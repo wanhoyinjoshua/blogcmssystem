@@ -559,10 +559,10 @@ var parsedcontent= JSON.parse(onepost.jsondata).content
     }
 
   }
-  console.log(JSON.parse(resdata.onepost.jsondata))
+  console.log(JSON.parse(onepost.jsondata))
   return {
     props: {
-      onepost:JSON.parse(resdata.onepost.jsondata),
+      onepost:JSON.parse(onepost.jsondata),
       image:imagelist,
       postid:blogname,
       title:resdata.onepost.h1,
