@@ -2,7 +2,8 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import useAutosizeTextArea from "../../hooks/autoresize"
 import React, { useEffect, useState,useRef } from 'react'
-
+import {   QueryCommand} from "@aws-sdk/client-dynamodb";
+import docClient from '../../lib/dynamodb';
 import Router from 'next/router'
 
 
@@ -288,6 +289,7 @@ export default function Home(props) {
   };
   const [originalimagestack , setimagestack]= useState([])
   const [realslug,setslug]=useState(props.slug)
+  const [draftstatus,setdrafstatus]=useState(props.draftstatus)
   const router = useRouter()
   const  blogname  = router.query
 
@@ -408,7 +410,7 @@ export default function Home(props) {
 
 const deletepost=async()=>{
   if(window.confirm("are you sure, it cannot be undone")){
-     const deleteres= await fetch(`/api/deleteonepost?postid=${props.postid}`,
+     const deleteres= await fetch(`/api/deleteonepost?postid=${props.postid}&draftstatus=${props.draftstatus}`,
    {method:'POST'}
 
   )
@@ -424,6 +426,12 @@ const deletepost=async()=>{
 
   const savehtml=async ()=>{
     //data is in html
+    const isLive=window.confirm("Click yes if you want to upload to live website, click no if you want to remove it / save as draft ( will not be shown on live website).")
+    const bail=window.confirm(`Do you want to proceed with ${isLive==true?"Uploading to the live website":"uploading as a draft version"}`)
+    if (bail==false){
+      return
+    }
+    window.alert(isLive)
     setSave("uploading")
     let imagelist=[]
     //run a for loop in content and find the image tag 
@@ -503,7 +511,7 @@ const deletepost=async()=>{
       ])
     
    
-    const finalupload={json:savedjsondata,html:savedhtmldata,articleid:props.postid, heading:formaattedheading, slug:slug, date:new Date().toLocaleDateString(),imagepreview:imagelist[0]}
+    const finalupload={json:savedjsondata,html:savedhtmldata,articleid:props.postid, heading:formaattedheading, slug:slug, date:new Date().toLocaleDateString(),imagepreview:imagelist[0],draftstatus:isLive==true?1:0,originaldraftstatus:props.draftstatus}
     //set the state here so the latest state is the image list
     console.log("this is final uplaod") 
     console.log(finalupload)
@@ -527,6 +535,7 @@ const deletepost=async()=>{
     else{
       //upload successusfull
       setSave("saved")
+      Router.push("/")
     }
 
 
@@ -569,6 +578,9 @@ const deletepost=async()=>{
        
         <Link className="homepagebutton"href='/'>Homepage</Link>
         <button className="leftbutton" onClick={addImage}>setImageonline</button>
+        {draftstatus==0?
+        <button onClick={()=>{setdrafstatus(1)}}>Click Promote to Production-Live yas baby!</button>:
+        <button onClick={()=>{setdrafstatus(0)}} >Will be saved to live site if saved, click again if wanting to Remove from live site.</button>}
        <input
        className="leftbutton"
 
@@ -587,11 +599,13 @@ const deletepost=async()=>{
         
       </div>
       <div className='righttoolbar'>
-      {saved=="saved"&& <Link className="rightpreviewbutton rightbutton" href={`/preview/${realslug}`}><button>Preview the article onlibne</button></Link>}
+      
+      {saved=="7"&& <Link className="rightpreviewbutton rightbutton" href={`/preview/${realslug}`}><button>Preview the article onlibne</button></Link>}
       
       <button className="rightdeletebutton rightbutton" onClick={deletepost}>Delete the post</button>
       <button className="rightsavebutton rightbutton" onClick ={savehtml}>save the draft online Status: {JSON.stringify(saved)}</button>
-     
+      <br></br>
+  
       <br></br>
      
 
@@ -654,17 +668,26 @@ const deletepost=async()=>{
 export async function getServerSideProps({ params }) {
   
   let blogname = params.name
+
+   const input2 = {
+     "ExpressionAttributeValues": {
+       ":v1": {
+         "S": blogname
+       }
+     },
+     "KeyConditionExpression": "blogid = :v1",
  
- const onepost = await prisma.blogs.findUnique({
-  where: {
-      blogtitleid: `${blogname}`
-    },
+     "TableName": "kidsandcubsclinicblog"
+   };
 
 
-})
-
-var parsedcontent= JSON.parse(onepost.jsondata).content
-  
+  const command = new QueryCommand(input2);
+  const response = await docClient.send(command);
+  console.log(response)
+ 
+console.log(response["Items"])
+var parsedcontent= JSON.parse(response["Items"][0].jsondata["S"]).content
+  console.log(parsedcontent)
   var imagelist=[]
   for (let i = 0; i < parsedcontent.length; i++) {
     
@@ -677,14 +700,15 @@ var parsedcontent= JSON.parse(onepost.jsondata).content
     }
 
   }
-  console.log(JSON.parse(onepost.jsondata))
+
   return {
     props: {
-      onepost:JSON.parse(onepost.jsondata),
+      onepost:JSON.parse(response["Items"][0].jsondata["S"]),
       image:imagelist,
       postid:blogname,
-      title:onepost.h1,
-      slug:onepost.slug
+      title:response["Items"][0].h1["S"],
+      slug:response["Items"][0].slug["S"],
+      draftstatus:response["Items"][0].published["N"]
       
       
     }

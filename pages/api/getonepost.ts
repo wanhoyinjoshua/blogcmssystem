@@ -1,4 +1,3 @@
-import prisma from "../../lib/prisma"
 
 export default async function findonepost(req, res) {
   const { method } = req
@@ -8,17 +7,10 @@ export default async function findonepost(req, res) {
       try {
         
         
-        const onepost = await prisma.blogs.findUnique({
-            where: {
-                blogtitleid: `${req.query.postid}`
-              },
-
-
-        })
-        console.log(onepost)
+      
         
         
-        res.status(200).json({onepost:onepost})
+        res.status(200).json({onepost:""})
 
         
         

@@ -16,6 +16,8 @@
       outline: none
     }
 
+   
+
 
     .my-custom-article-link{
       
@@ -246,6 +248,8 @@
   max-width: 70%;
   margin: 0 auto;
 
+  
+
   a{
     
     color: inherit; /* blue colors for links too */
@@ -266,6 +270,13 @@
 
     display: grid;
     grid-template-rows: 2fr 1fr ;
+  }
+  .production{
+    background-color: green;
+
+  }
+  .draft{
+    background-color: red;
   }
   .image{
     background-color: beige;

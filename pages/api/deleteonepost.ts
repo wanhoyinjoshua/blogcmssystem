@@ -1,24 +1,39 @@
-import prisma from "../../lib/prisma"
+
+
+import { DeleteCommand } from "@aws-sdk/lib-dynamodb";
+
+import docClient from "../../lib/dynamodb"
 
 export default async function findonepost(req, res) {
   const { method } = req
 
+
   switch (method) {
     case 'POST':
       try {
+        console.log(req.query.draftstatus)
+        console.log(req.query)
+        console.log(req.query.postid)
+        const command = new DeleteCommand({
+          TableName: "kidsandcubsclinicblog",
         
+          Key: {
+            "blogid":req.query.postid,
+           
+            "published":Number(req.query.draftstatus)
+          },
+        });
+      
+        const response = await docClient.send(command);
+        console.log(response)
         
-        const onepost = await prisma.blogs.delete({
-            where: {
-                blogtitleid: `${req.query.postid}`
-              },
 
-
-        })
-        console.log(onepost)
         
         
-        res.status(200).json({onepost:onepost})
+        
+        
+        
+        res.status(200).json({onepost:response})
 
         
         

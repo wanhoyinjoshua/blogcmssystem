@@ -3,7 +3,10 @@ import React from 'react'
 import Router from 'next/router'
 import Image from 'next/image'
 import Blogpost from "../components/Blogpost"
-import prisma from "../lib/prisma"
+
+import docClient from '../lib/dynamodb'
+import {ScanCommand} from "@aws-sdk/lib-dynamodb";
+
 const index = (props) => {
   const createproject =async()=>{
     const projectname= window.prompt("What is the project name?")
@@ -18,7 +21,7 @@ const index = (props) => {
       //error message cant create a new project
       window.alert("congragulations you successfuly created a new blog paage")
      
-      Router.push(`/blog/${duplicate.data.duplicate.blogtitleid}`)
+      Router.push(`/blog/${duplicate.data.duplicate.blogid}`)
      
      
     }
@@ -42,9 +45,10 @@ const index = (props) => {
       
       {props.data.map((e)=>{
        return (
-        
-        <Blogpost key={e.blogtitleid} heading={e.heading} picture={e.picture} date={e.time} blogtitleid={e.blogtitleid}></Blogpost>
+        <div>
 
+        <Blogpost key={e.blogtitleid} heading={e.heading} picture={e.picture} date={e.time} blogtitleid={e.blogtitleid}  published={e.published}></Blogpost>
+</div>
      );})}
        
         
@@ -63,14 +67,32 @@ export default index
 
 
 export async function getServerSideProps() {
-  
+  //need to find all posts...
+  const input = {
+    
+    "ExpressionAttributeValues": {
+        ":value": 0,
+        ":value2":1
+       
+    },
+    "FilterExpression": "published = :value or published = :value2",
+    
+    "ProjectionExpression": "imagepreview,blogid,timeupdated,h1,published",
+    "TableName": "kidsandcubsclinicblog"
+  };
+
+  const command = new ScanCommand(input)
+  const response = await docClient.send(command);
+  console.log(response)
+
  
-  const allpost = await prisma.blogs.findMany()
-  const data = allpost.map((article) => ({
+ 
+  const data = response["Items"].map((article) => ({
     picture: article.imagepreview,
-    blogtitleid:article.blogtitleid,
+    blogtitleid:article.blogid,
     time:article.timeupdated,
-    heading:article.h1
+    heading:article.h1,
+    published:article.published
   }))
   
   

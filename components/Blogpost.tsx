@@ -4,12 +4,14 @@ export interface Props {
     picture: string;
     date:string;
     blogtitleid:string;
+    published:any;
   }
 const Blogpost = (props:Props) => {
   return (
     <a href={`/blog/${props.blogtitleid}`}>
-    <div className="card">
+    <div className={`${props.published==1?"production":"draft"} card `}>
     <div className="image">
+     
       <img
       src={props.picture}
      
@@ -26,6 +28,7 @@ const Blogpost = (props:Props) => {
         <div className="headerimage"><img src="./kidsandcubslogo.webp"></img></div>
         <div className="headerwords">
          {props.heading}
+        
 
         </div>
        

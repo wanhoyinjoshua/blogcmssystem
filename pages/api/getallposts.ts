@@ -1,4 +1,3 @@
-import prisma from "../../lib/prisma"
 
 export default async function findallpost(req, res) {
   const { method } = req
@@ -7,12 +6,9 @@ export default async function findallpost(req, res) {
     case 'GET':
       try {
         
+   
         
-        const allpost = await prisma.blogs.findMany()
-        console.log(allpost)
-        
-        
-        res.status(200).json({allpost:allpost})
+        res.status(200).json({allpost:""})
 
         
         

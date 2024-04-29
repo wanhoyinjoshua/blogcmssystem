@@ -1,5 +1,7 @@
-import prisma from "../../lib/prisma"
 
+import docClient from "../../lib/dynamodb"
+import {   GetItemCommand} from "@aws-sdk/client-dynamodb";
+import { PutCommand } from "@aws-sdk/lib-dynamodb";
 export default async function assetHandler(req, res) {
   const { method } = req
 
@@ -8,13 +10,24 @@ export default async function assetHandler(req, res) {
       try {
         console.log(req.query.blog)
         var formattedblogname= req.query.blog.toLowerCase().replace(/\s/g, '-')
-        const duplicate = await prisma.blogs.findUnique({
-            where: {
-            blogtitleid: `${formattedblogname}`
+        const input = {
+          Key: {
+            blogid:{S:formattedblogname},
+            published:{N:"1"||"0"}
+               
+               
+            
+              
+            
           },
-        })
-        console.log(duplicate)
-        if (duplicate==null){
+          TableName: "kidsandcubsclinicblog"
+        };
+
+        const command = new GetItemCommand(input);
+        const response = await docClient.send(command);
+       console.log(response)
+        
+        if (response["Item"]==null){
           var welcomemessage={
             "type": "doc",
             "content": [
@@ -23,24 +36,42 @@ export default async function assetHandler(req, res) {
                 "content": [
                   {
                     "type": "text",
-                    "text": "Wow, this editor instance exports its content as JSON."
+                    "text": "Write your blog here"
                   }
                 ]
               }
             ]
           }
           
-          const newblogpost = await prisma.blogs.create({
-            data: {
-              blogtitleid:formattedblogname,
-              body: '',
-              timeupdated:"",
-              jsondata:JSON.stringify(welcomemessage),
-              slug:formattedblogname,
-              imagepreview:""
+        
+
+          //create 
+          const command2 = new PutCommand({
+            TableName: "kidsandcubsclinicblog",
+            Item: {
+              "blogid":formattedblogname,
+              "body":"",
+              "jsondata": JSON.stringify(welcomemessage),
+              "h1":"",
+              "timeupdated":"",
+              "slug": formattedblogname,
+              "imagepreview":"",
+              "published":0
             },
-          })
-            res.status(200).json({duplicate:newblogpost})
+          });
+        
+          const response = await docClient.send(command2);
+            res.status(200).json({duplicate:{
+              "blogid":formattedblogname,
+              "body":'',
+              "jsondata": JSON.stringify(welcomemessage),
+              "h1":"",
+              "timeupdated":"",
+              "slug": formattedblogname,
+              "imagepreview":"",
+              "published":0,
+              "response":response
+            }})
 
         }
         else{
