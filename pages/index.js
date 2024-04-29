@@ -1,7 +1,7 @@
 import axios from 'axios'
 import React from 'react'
 import Router from 'next/router'
-import Image from 'next/image'
+
 import Blogpost from "../components/Blogpost"
 
 import docClient from '../lib/dynamodb'
@@ -45,10 +45,10 @@ const index = (props) => {
       
       {props.data.map((e)=>{
        return (
-        <div>
+        
 
         <Blogpost key={e.blogtitleid} heading={e.heading} picture={e.picture} date={e.time} blogtitleid={e.blogtitleid}  published={e.published}></Blogpost>
-</div>
+
      );})}
        
         
