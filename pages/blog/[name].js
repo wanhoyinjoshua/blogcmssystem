@@ -578,9 +578,7 @@ const deletepost=async()=>{
        
         <Link className="homepagebutton"href='/'>Homepage</Link>
         <button className="leftbutton" onClick={addImage}>setImageonline</button>
-        {draftstatus==0?
-        <button onClick={()=>{setdrafstatus(1)}}>Click Promote to Production-Live yas baby!</button>:
-        <button onClick={()=>{setdrafstatus(0)}} >Will be saved to live site if saved, click again if wanting to Remove from live site.</button>}
+  
        <input
        className="leftbutton"
 
